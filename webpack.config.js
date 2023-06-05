@@ -6,7 +6,7 @@ const copyPlugin = require("copy-webpack-plugin");
 module.exports = {
     mode: 'development',
     entry: {
-      memes: './src/js/show.js',
+      shows: './src/js/show.js',
     },
     output: {
       path: path.resolve(__dirname, "dist"),
