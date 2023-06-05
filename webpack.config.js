@@ -3,22 +3,29 @@ const path = require('path');
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const copyPlugin = require("copy-webpack-plugin");
 
+
+
+const isProduction = (process.env.NODE_ENV === 'production');
+
+const fileNamePrefix = isProduction? '[chunkhash].' : '';
+
 module.exports = {
-    mode: 'development',
+    mode: !isProduction ? 'development': 'production',
     entry: {
       shows: './src/js/show.js',
     },
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: '[name].bundle.js',
+      filename: fileNamePrefix + 'bundle.js',
       assetModuleFilename: "images/[name][ext]",
       clean: true,
     },
     target: 'web',
     devServer: { 
       static: "./dist"
-    }, 
-    devtool: 'source-map', 
+    },
+
+    devtool: !isProduction ? 'source-map' : 'inline-source-map', 
     module: {
       rules: [	
         { 
@@ -73,3 +80,12 @@ module.exports = {
       }),
     ],
 }
+
+
+ if(isProduction) {
+  module.exports.plugins.push(
+    new MiniCssExtractPlugin({
+      filename: fileNamePrefix + "[name].css",
+    })
+  );
+};

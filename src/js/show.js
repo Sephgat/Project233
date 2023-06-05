@@ -6,7 +6,6 @@ class Shows {
 
     try {
       this.savedShows = JSON.parse(localStorage["savedShows"]); // localStorage.getItem("tasks")
-      console.log(this.savedShows)
   }
   catch{ this.savedShows = []; }
 
@@ -25,9 +24,7 @@ class Shows {
     fetch(`${this.apiURL}${this.$addShow.value}${this.apiURLEnd}`)
       .then(response => response.json())
       .then(data => {
-        //console.log(data)
-        //console.log(data.data[1])//this format
-        //document.getElementById("showlists").innerHTML = "";
+        document.getElementById("detailsPage").innerHTML = "";
         this.$addShow.value = "";
         this.showList(data.data);
       })
@@ -57,11 +54,10 @@ class Shows {
 
 
   addToList(i ,data){
-    console.log(i)
-    console.log(this.shows[i])
-
+    
     const show = {
       title: this.shows[i].title,
+
       url: `https://www.crunchyroll.com/search?q=${this.shows[i].title}`,
     }
 
@@ -90,11 +86,6 @@ class Shows {
 
   }
   deleteSavedShow(i, event){
-    console.log(i);
-    console.log(event);
-    console.log(this.savedShows[i]);
-    console.log(this.savedShows)
-
     event.preventDefault();
     this.savedShows.splice(i, 1);
     this.loadSavedShows();
@@ -112,12 +103,12 @@ class Shows {
     `
   }
 
-  detailsHtml(i, data) {
+  detailsHtml(i) {
     let detailsHtml = `
     
       <div class="col-2">
         <img src="${this.shows[i].images.webp.image_url}" style="height: 100px;" alt="test">
-        <p>Title</p>
+        <p>Title : ${this.shows[i].title}</p>
       </div>
 
       <div class="col-7">
@@ -125,8 +116,8 @@ class Shows {
       </div>
       <div class="col-2">
         <p>Is going: ${this.shows[i].status}</p>
-        <p>day</p>
-        <a href="#">Link</a>
+        <p>day: ${this.shows[i].broadcast.string}</p>
+        <a href="https://www.crunchyroll.com/search?q=${this.shows[i].title}"target="_blank">Link</a>
       </div>
 
 
@@ -136,7 +127,11 @@ class Shows {
         <button id="addBut" class="btn btn-primary">Add</button>
       </div>`;
     document.getElementById("detailsPage").innerHTML = detailsHtml;
+    let addElements = document.getElementById("addBut");
+
+    addElements.onclick = this.addToList.bind(this,i)
   }
+
   showListitem(data, index) {
     return `
     <div class="row p-1" style="border: 1px solid black;" >
@@ -152,7 +147,7 @@ class Shows {
     <div class="col-2">
         <p>${data.status}</p>
     </div>
-    <div class="col-1">
+    <div class="col-2">
         <p>${data.broadcast.string}</p>
     </div>
     <div class="col-1">
@@ -160,9 +155,6 @@ class Shows {
     </div>
     <div class="col-1">
         <button id="addButton" name="addBtn" class="btn btn-primary">Add</button>
-    </div>
-    <div class="col-1">
-        <button id="deleteButton" name = "dlt" class="btn btn-primary">delete</button>
     </div>
 </div>`
   }
